@@ -1,4 +1,4 @@
-#' @title epiasocgenes
+#' @title VARI3
 #' @description Esta función realiza un test de epistasis seleccionando SNPs prometedores.
 #' @import parallel
 #' @import readr
@@ -25,7 +25,7 @@
 #' @export
 
 # Función
-epiasocgenes = function(bfile, 
+VARI3 = function(bfile, 
                         out, 
                         primarylist = NULL,
                         genelist = NULL,
