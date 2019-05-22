@@ -1,6 +1,6 @@
-# Package epiasocgenes
+# Package VARI3
 
-To use the epiasocgenes function you must have Plink and ANNOVAR installed. 
+To use the VARI3 function you must have Plink and ANNOVAR installed. 
 Therefore, before explaining the operation of the function we will give the basic details for the installation of the tools.
 
 ## Plink
