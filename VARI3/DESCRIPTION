@@ -1,9 +1,9 @@
-Package: epiasocgenes
-Title: Paquete epiasocgenes
+Package: VARI3
+Title: Paquete VARI3
 Version: 0.1
 Authors@R: person("Alejandro", "Cisterna", email = "alejandro.cisterna@um.es", role = c("aut", "cre"))
 Description: Este paquete contiene las funciones necesarias para hacer e interpretar un análisis de epistasis.
-Depends: R (>= 3.6.0)
+Depends: R (>= 3.5.0)
 Imports: parallel, readr, data.table, dplyr
 License: GPL-3
 Encoding: UTF-8
