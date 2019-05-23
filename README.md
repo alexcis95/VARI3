@@ -1,6 +1,7 @@
 # Package VARI3
 
-Aproach to VARIant-VARIant interaction through VARIable tresholds and hypotesis testing. VARI3 automates the selection and analysis of the most promising SNPs for the search of epistasis.  
+Aproach to VARIant-VARIant interaction through VARIable tresholds and hypotesis testing.   
+VARI3 automates the selection and analysis of the most promising SNPs for the search of epistasis.  
 
 ## Requirements  
 
@@ -84,7 +85,12 @@ BCL2
 
 ## How VARI3 does the analysis
 
-### If you don't specify any list of genes
+#### If you don't specify any list of genes  
 
+VARI3 automates the selection and analysis of the most promising SNPs for the search of epistasis across the genome. 
+
+**VARI3 Steps:**  
+
+First performs an analysis of the association of the SNPs to the phenotype. The analysis may include the selection of covariates by defining the **covar** and **ncov** variables. Then if **clump** variable is (clump = T) clumps to discard the SNPs in LD or not if (clump = F). Next performs the filtering of promising SNPs by enhancing the selection of SNPs with high MAFs. The usual limit of p.value in the GWAS for the selection of SNPs associated to a phenotype is 10^-8 but to promote the search of epistasis we lower this limit with the **AsT** variable to 10^-5 by default. This allows to select SNPs with a superior MAF in which we can find relevant interactions. We select the SNPs with the lowest p.value as follow: 5 SNPs with a MAF between 0.01-0.05, 5 SNPs with a MAF between 0.05-0.1, 20 SNPs with a MAF between 0.1-0.2, 20 SNPs with a MAF between 0.2-0.3, 20 SNPs with a MAF between 0.3-0.4 and 30 SNPs with a MAF>0.4. Finally the selected SNPs are then tested against all other SNPs in the genome for epistasis. The result is shown in a user-friendly way in the file **epiinform.txt**.
 
 
