@@ -16,8 +16,7 @@ To download ANNOVAR we can do it from the link: http://annovar.openbioinformatic
 
 First, we have to sign in, then we receive an email in which we have the following link: http://www.openbioinformatics.org/annovar/download/0wgxR2rIVP/annovar.latest.tar.gz  
 Once we have downloaded ANNOVAR we unzip the file. You will see that you have a folder called annovar where there are several Perl 
-files with the suffix pl. (Note that if you have already added the ANNOVATE path to the executable path from  
-your system, then typing annotate_variation.pl would be valid instead of typing perl annotate_variation.pl). 
+files with the suffix pl. (Note that if you have already added the ANNOVATE path to the executable path from your system, then typing annotate_variation.pl would be valid instead of typing perl annotate_variation.pl). 
 First, we need to download the appropriate database files using annotate_variation.pl, we must execute in the terminal 
 the following commands:    
 
@@ -30,4 +29,11 @@ annotate_variation.pl -buildver hg19 -downdb -webfrom annovar exac03 humandb/
 annotate_variation.pl -buildver hg19 -downdb -webfrom annovar avsnp147 humandb/   
 
 annotate_variation.pl -buildver hg19 -downdb -webfrom annovar dbnsfp30a humandb/  
+
+## How to use VARI3
+VARI3 automates the selection and analysis of the most promising SNPs for the search of epistasis. The final result of the execution is a table with the key data of the epistatic interactions. To use the function it is necessary to have the following libraries installed: library(parallel), library(readr), library(data.table), library(dplyr).  
+To use **VARI3** it is essential to have ANNOVAR, plink and the genotype of the cohort in bfile format.
+To comment on the different variables that are configurable in **VARI3**, let's detail their function and use:  
+**bfile** 
+
 
