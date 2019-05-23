@@ -93,12 +93,24 @@ VARI3 automates the selection and analysis of the most promising SNPs in *all ge
 
 First performs an analysis of the association of the SNPs to the phenotype. The analysis may include the selection of covariates by defining the **covar** and **ncov** variables. Then if **clump** variable is (clump = T) clumps to discard the SNPs in LD or not if (clump = F). Next performs the filtering of promising SNPs by enhancing the selection of SNPs with high MAFs. The usual limit of p.value in the GWAS for the selection of SNPs associated to a phenotype is 10^-8 but to promote the search of epistasis we lower this limit with the **AsT** variable to 10^-5 by default. This allows to select SNPs with a superior MAF in which we can find relevant interactions. We select the SNPs with the lowest p.value as follow: 5 SNPs with a MAF between 0.01-0.05, 5 SNPs with a MAF between 0.05-0.1, 20 SNPs with a MAF between 0.1-0.2, 20 SNPs with a MAF between 0.2-0.3, 20 SNPs with a MAF between 0.3-0.4 and 30 SNPs with a MAF>0.4. Finally the selected SNPs are then tested against all other SNPs in the genome for epistasis. The result is shown in a user-friendly way in the file **epiinform.txt**.
 
+** For example:**  
+
+~~~
+VARI3(bfile = "path/bfile", out = "path", plink = "path/plink",varpl = "path/annotate_variation.pl", db = "path/annovar/humandb/")
+~~~
+
 ### If you specify genelist variable
 VARI3 automates the selection and analysis of the most promising SNPs in *all genome* for the search of epistasis *across the gene in genelist file*. 
 
 **VARI3 Steps:**  
 
 First performs an analysis of the association of the SNPs to the phenotype. The analysis may include the selection of covariates by defining the **covar** and **ncov** variables. Then if **clump** variable is (clump = T) clumps to discard the SNPs in LD or not if (clump = F). Next performs the filtering of promising SNPs by enhancing the selection of SNPs with high MAFs. The usual limit of p.value in the GWAS for the selection of SNPs associated to a phenotype is 10^-8 but to promote the search of epistasis we lower this limit with the **AsT** variable to 10^-5 by default. This allows to select SNPs with a superior MAF in which we can find relevant interactions. We select the SNPs with the lowest p.value as follow: 5 SNPs with a MAF between 0.01-0.05, 5 SNPs with a MAF between 0.05-0.1, 20 SNPs with a MAF between 0.1-0.2, 20 SNPs with a MAF between 0.2-0.3, 20 SNPs with a MAF between 0.3-0.4 and 30 SNPs with a MAF>0.4. Finally the selected SNPs are then tested against the SNPs of the genes defined in the file referenced with the **genelist** variable for epistasis. The result is shown in a user-friendly way in the file **epiinform.txt**.
+
+** For example:**  
+
+~~~
+VARI3(bfile = "path/bfile", out = "path", plink = "path/plink",varpl = "path/annotate_variation.pl", db = "path/annovar/humandb/", genelist = "path/genefile.txt" )
+~~~
 
 ### If you specify genelist variable and primarylist variable
 VARI3 automates the selection and analysis of the most promising SNPs of *the genes defined in primarylist file* for the search of epistasis *across the gene in genelist file*. 
@@ -107,11 +119,16 @@ VARI3 automates the selection and analysis of the most promising SNPs of *the ge
 
 First performs an analysis of the association of the SNPs of the genes defined in the file referenced with the **primarylist** variable to the phenotype. The analysis may include the selection of covariates by defining the **covar** and **ncov** variables. Then if **clump** variable is (clump = T) clumps to discard the SNPs in LD or not if (clump = F). Next performs the filtering of promising SNPs by enhancing the selection of SNPs with high MAFs. The usual limit of p.value in the GWAS for the selection of SNPs associated to a phenotype is 10^-8 but to promote the search of epistasis we lower this limit with the **AsT** variable to 10^-5 by default. This allows to select SNPs with a superior MAF in which we can find relevant interactions. We select the SNPs with the lowest p.value as follow: 5 SNPs with a MAF between 0.01-0.05, 5 SNPs with a MAF between 0.05-0.1, 20 SNPs with a MAF between 0.1-0.2, 20 SNPs with a MAF between 0.2-0.3, 20 SNPs with a MAF between 0.3-0.4 and 30 SNPs with a MAF>0.4. Finally the selected SNPs are then tested against the SNPs of the genes defined in the file referenced with the **genelist** variable for epistasis. The result is shown in a user-friendly way in the file **epiinform.txt**.  
 
+** For example:**  
+
+~~~
+VARI3(bfile = "path/bfile", out = "path", plink = "path/plink",varpl = "path/annotate_variation.pl", db = "path/annovar/humandb/", genelist = "path/genefile.txt", primarylist = "path/prigenelist.txt" )
+~~~
+
 
 ## How to see the VARI3 results
 
-The final result is shown in a user-friendly way in the file **epiinform.txt**. For example we can see in R:  
-
+The final result is shown in a user-friendly way in the file **epiinform.txt**. For example we can see in R:
 ~~~
 epiinform = read_delim("epiinform.txt",
                        delim = " ", col_types = "cnnncccnnnccnnccc")
