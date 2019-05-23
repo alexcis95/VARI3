@@ -85,7 +85,7 @@ BCL2
 
 ## How VARI3 does the analysis
 
-#### If you don't specify any list of genes  
+### If you don't specify any list of genes  
 
 VARI3 automates the selection and analysis of the most promising SNPs for the search of epistasis across the genome. 
 
