@@ -141,3 +141,13 @@ epiinform = read_delim("epiinform.txt",
                        delim = " ", col_types = "cnnncccnnnccnnccc")
 ~~~
 
+| SNP        | CHISQ | TBf       | Pepi      | SNP2        | GEN1 | GEN2    | F_A1   | ORl1   | Pl1       | LOC1     | F_A2    | Pl2      | ORl2   | LOC2     |
+|------------|-------|-----------|-----------|-------------|------|---------|--------|--------|-----------|----------|---------|----------|--------|----------|
+| 4:90666041 | 17.69 | 1.989e-06 | 2.607e-05 | 6:166956680 | SNCA | RPS6KA2 | 0.3926 | 1.2300 | 2.595e-09 | intronic | 0.38480 | 0.514300 | 1.0230 | intronic |  
+
+
+In this example we can see the 15 columns of epiinform file and one example of variant-variant interaction, we go to explain what mean each column:
+
+* **SNP** The SNP column refers to the SNP position in the genome, this SNP was selected by VARI3 to test epistasis.
+* **CHISQ** The CHISQ column refers to the
+
