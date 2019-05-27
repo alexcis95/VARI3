@@ -1,7 +1,7 @@
 # Package VARI3
 
 Approach to VARIant-VARIant interaction through VARIable thresholds and hypothesis testing.   
-VARI3 automates the selection and analysis of the most promising SNPs for the search of epistasis.  
+VARI3 automates the selection and analysis of the most promising SNPs to identify epistasis.  
 
 ## Requirements  
 
@@ -36,7 +36,7 @@ annotate_variation.pl -buildver hg19 -downdb -webfrom annovar dbnsfp30a humandb/
 
 ## How to use VARI3
 
-VARI3 automates the selection and analysis of the most promising SNPs for the search of epistasis. The final result of the execution is a table with the key data of the epistatic interactions. To use the function it is necessary to have the following libraries installed: library(parallel), library(readr), library(data.table), library(dplyr).  
+VARI3 automates the selection and analysis of the most promising SNPs to identify epistasis. The final result of the execution is a table with the key data of the epistatic interactions. To use the function it is necessary to have the following libraries installed: library(parallel), library(readr), library(data.table), library(dplyr).  
 To use **VARI3** it is necessary to have ANNOVAR, plink and the genotype of the cohort in bfile format.
 To comment on the different variables that are configurable in **VARI3**, let's detail their function and use:  
 
@@ -87,7 +87,7 @@ BCL2
 
 ### If you don't specify any list of genes  
 
-VARI3 automates the selection and analysis of the most promising SNPs in *all genome* for the search of epistasis *across the genome*. 
+VARI3 automates the selection and analysis of the most promising SNPs in *all genome* to identify epistasis *across the genome*. 
 
 **VARI3 Steps:**  
 
@@ -102,7 +102,7 @@ db = "path/annovar/humandb/")
 ~~~
 
 ### If you specify genelist variable
-VARI3 automates the selection and analysis of the most promising SNPs in *all genome* for the search of epistasis *across the gene in genelist file*. 
+VARI3 automates the selection and analysis of the most promising SNPs in *all genome* to identify epistasis *across the gene in genelist file*. 
 
 **VARI3 Steps:**  
 
@@ -117,7 +117,7 @@ db = "path/annovar/humandb/", genelist = "path/genefile.txt" )
 ~~~
 
 ### If you specify genelist variable and primarylist variable
-VARI3 automates the selection and analysis of the most promising SNPs of *the genes defined in primarylist file* for the search of epistasis *across the gene in genelist file*. 
+VARI3 automates the selection and analysis of the most promising SNPs of *the genes defined in primarylist file* to identify epistasis *across the gene in genelist file*. 
 
 **VARI3 Steps:**  
 
