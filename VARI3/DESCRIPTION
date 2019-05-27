@@ -4,7 +4,7 @@ Version: 0.1
 Authors@R: person("Alejandro", "Cisterna", email = "alejandro.cisterna@um.es", role = c("aut", "cre"))
 Description: Este paquete contiene las funciones necesarias para hacer e interpretar un análisis de epistasis.
 Depends: R (>= 3.5.0)
-Imports: parallel, readr, data.table, dplyr
+Imports: parallel, readr, data.table, dplyr, reshape2, ggplot2, tidyr
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
