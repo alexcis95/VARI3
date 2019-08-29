@@ -795,7 +795,7 @@ VARI3 = function(bfile,
       names(episuc100) = c("CHR", "SNP", "N_SIG", "N_TOT", "PROP", "BEST_CHISQ", "BEST_CHR", "BEST_SNP", "TBf")
 
       # Read variants and annovar data
-      assocrelevant100 = read_delim("",out,"/assocrelevant.txt",
+      assocrelevant100 = read_delim(paste0("",out,"/assocrelevant.txt"),
                                     delim = " ", col_types = "ncncnncnnn")
       asclumanovar100= read_delim(paste0("",out,"/aaclummerge.txt"),
                                   delim = " ", col_types = "nnncnncnnncccccc")
