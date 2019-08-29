@@ -1957,7 +1957,7 @@ VARI3 = function(bfile,
           #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/allanomerge.txt"))
 
           allassocano = read_delim(paste0("",out,"/allanomerge.txt"),
-                                   delim = " ", col_types = "nnncnncnnnnncccc")
+                                   delim = " ", col_types = "nnncnncnnncccc")
 
           # Filtra las variantes de la lista de genes
           filtervariants = data.frame()
@@ -2244,7 +2244,7 @@ VARI3 = function(bfile,
           #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/allanomerge.txt"))
 
           allassocano = read_delim(paste0("",out,"/allanomerge.txt"),
-                                   delim = " ", col_types = "nnncnncnnnnncccc")
+                                   delim = " ", col_types = "nnncnncnnncccc")
 
           # Filtra las variantes de la lista de genes
           filtervariants = data.frame()
@@ -2568,7 +2568,7 @@ VARI3 = function(bfile,
           #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/allanomerge.txt"))
 
           allassocano = read_delim(paste0("",out,"/allanomerge.txt"),
-                                   delim = " ", col_types = "nnncnncnnnnncccc")
+                                   delim = " ", col_types = "nnncnncnnncccc")
 
           # Filtra las variantes de la lista de genes
           filtervariants = data.frame()
@@ -2862,7 +2862,7 @@ VARI3 = function(bfile,
           #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/allanomerge.txt"))
 
           allassocano = read_delim(paste0("",out,"/allanomerge.txt"),
-                                   delim = " ", col_types = "nnncnncnnnnncccc")
+                                   delim = " ", col_types = "nnncnncnnncccc")
 
           # Filtra las variantes de la lista de genes
           filtervariants = data.frame()
@@ -3656,7 +3656,7 @@ VARI3 = function(bfile,
           #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/allanomerge.txt"))
 
           allassocano = read_delim(paste0("",out,"/allanomerge.txt"),
-                                   delim = " ", col_types = "nnncnncnnnnncccc")
+                                   delim = " ", col_types = "nnncnncnnncccc")
 
           # Filtra las variantes de la lista de genes
           filtervariants = data.frame()
@@ -3968,7 +3968,7 @@ VARI3 = function(bfile,
           #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/allanomerge.txt"))
 
           allassocano = read_delim(paste0("",out,"/allanomerge.txt"),
-                                   delim = " ", col_types = "nnncnncnnnnncccc")
+                                   delim = " ", col_types = "nnncnncnnncccc")
 
           # Filtra las variantes de la lista de genes
           filtervariants = data.frame()
@@ -4319,7 +4319,7 @@ VARI3 = function(bfile,
           #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/allanomerge.txt"))
 
           allassocano = read_delim(paste0("",out,"/allanomerge.txt"),
-                                   delim = " ", col_types = "nnncnncnnnnncccc")
+                                   delim = " ", col_types = "nnncnncnnncccc")
 
           filtervariants = data.frame()
           for(ii in 1:length(genes$GEN)){
@@ -4616,7 +4616,7 @@ VARI3 = function(bfile,
           #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/allanomerge.txt"))
 
           allassocano = read_delim(paste0("",out,"/allanomerge.txt"),
-                                   delim = " ", col_types = "nnncnncnnnnncccc")
+                                   delim = " ", col_types = "nnncnncnnncccc")
 
           # Filtra las variantes de la lista de genes
           filtervariants = data.frame()
