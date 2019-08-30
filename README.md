@@ -2,10 +2,12 @@
 
 Approach to VARIant-VARIant interaction through VARIable thresholds and hypothesis testing.   
 VARI3 automates the selection and analysis of the most promising SNPs to identify epistasis.  
-This package contain: 
-VARI3 function. 
-TLTO function, Two Locus To Odd.
-PTMDR function, Plink To Multifactor Dimensionality Reduction.
+
+This package contain:  
+
+VARI3 function.   
+TLTO function, Two Locus To Odd.  
+PTMDR function, Plink To Multifactor Dimensionality Reduction.  
 
 ## Requirements  
 
