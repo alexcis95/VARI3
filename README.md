@@ -159,16 +159,15 @@ In this example we can see the 15 columns of epiinform file and one example of v
 * **TBf** The TBf column refers to the Bonferroni's treshold of p.value from the interaction is significative.
 * **Pepi** The Pepi column refers to the p.value of the epistasis interaction. If Pepi is lower than TBf the interaction is significative.
 * **SNP2** The SNP2 column refers to the SNP position in the genome, this SNP2 is the best epistasis SNP2 that interacts with the first SNP (SNP column).
-* **GEN1** The GEN1 column refers to the gene symbol of the SNP column.
-first SNP (SNP column).
-* **GEN2** The GEN2 column refers to the gene symbol of the SNP2 column.
+* **GEN1** The GEN1 column refers to the gene symbol of the SNP in the SNP column. 
+* **GEN2** The GEN2 column refers to the gene symbol of the SNP in the SNP2 column.
 * **F_A1** The F_A1 column refers to the MAF of the SNP in the SNP column.
 * **ORl1** The ORl1 column refers to the odd ratio of the SNP in the SNP column. 
-* **Pl1** The Pl1 coloumn refers to the p.value association risk of the SNP in the SNP column to the phenotype.
+* **Pl1** The Pl1 column refers to the p.value association risk of the SNP in the SNP column to the phenotype.
 * **LOC1** The LOC1 column refers to the localitation in the gene of the SNP in the SNP column.
 * **F_A2** The F_A2 column refers to the MAF of the SNP in the SNP2 column.
 * **ORl2** The ORl2 column refers to the odd ratio of the SNP in the SNP2 column. 
-* **Pl2** The Pl2 coloumn refers to the p.value association risk of the SNP in the SNP2 column to the phenotype.
+* **Pl2** The Pl2 column refers to the p.value association risk of the SNP in the SNP2 column to the phenotype.
 * **LOC2** The LOC2 column refers to the localitation in the gene of the SNP in the SNP2 column.
 
 
