@@ -224,4 +224,6 @@ PTMDR(bfile = "UNRELATED.SPAIN4.HARDCALLS.Rsq0.8", # bfile without extension
       out = "Desktop/")
 ~~~
 
-
+## Disclaimer
+This function has developed by Alejandro Cisterna García as part of his PhD mentored by Juan Antonio Botía Blaya.
+This package is only available for IPDGC members, if others users want to use it please contact to alejandro.cisterna@um.es 
