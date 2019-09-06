@@ -132,21 +132,23 @@ VARI3 = function(bfile,
           assocclumpmergue$SNPA = assocclumpmergue$SNP
 
           # Replace the chromosome to keep the position in the SNP column
-          for(ii in 22:1){
-            assocclumpmergue$SNP = gsub(paste0("",ii,":"),
-                                        "", assocclumpmergue$SNP)
-          }
+          #for(ii in 22:1){
+          #  assocclumpmergue$SNP = gsub(paste0("",ii,":"),
+          #                              "", assocclumpmergue$SNP)
+          #}
 
           # Format for ANNOVAR
           # We have to specify chr, start position, end position, reference allele (major), alternative allele (minor)
-          asclumpano = data.frame(assocclumpmergue$CHR,assocclumpmergue$SNP,
-                                  assocclumpmergue$SNP,assocclumpmergue$A2,
+
+          # He cambiado a BP por el problema de Bernabe
+          asclumpano = data.frame(assocclumpmergue$CHR,assocclumpmergue$BP,
+                                  assocclumpmergue$BP,assocclumpmergue$A2,
                                   assocclumpmergue$A1 , stringsAsFactors = F)
 
           # Format the file
           asclumpano$assocclumpmergue.CHR = as.numeric(asclumpano$assocclumpmergue.CHR)
-          asclumpano$assocclumpmergue.SNP = as.numeric(asclumpano$assocclumpmergue.SNP)
-          asclumpano$assocclumpmergue.SNP.1 = as.numeric(asclumpano$assocclumpmergue.SNP.1)
+          asclumpano$assocclumpmergue.BP = as.numeric(asclumpano$assocclumpmergue.BP)
+          asclumpano$assocclumpmergue.BP.1 = as.numeric(asclumpano$assocclumpmergue.BP.1)
           asclumpano$assocclumpmergue.A2 = gsub("   ", "", asclumpano$assocclumpmergue.A2)
           asclumpano$assocclumpmergue.A1 = gsub("   ", "", asclumpano$assocclumpmergue.A1)
 
@@ -199,20 +201,20 @@ VARI3 = function(bfile,
 
           # Mergue data frames
           aux = asevf[c("tipo", "ini")]
-          names(aux)[2] = "SNP"
-          aux$SNP = as.numeric(aux$SNP)
-          assocclumpmergue$SNP = as.numeric(assocclumpmergue$SNP)
+          names(aux)[2] = "BP"
+          aux$BP = as.numeric(aux$BP)
+          assocclumpmergue$BP = as.numeric(assocclumpmergue$BP)
 
           # Full_join by position
-          X = full_join(assocclumpmergue, aux, by ="SNP")
+          X = full_join(assocclumpmergue, aux, by ="BP")
 
           # Same for the other file
           aux2 = asvf[c("loc","gen","ini")]
-          names(aux2)[3] = "SNP"
-          aux2$SNP = as.numeric(aux2$SNP)
+          names(aux2)[3] = "BP"
+          aux2$BP = as.numeric(aux2$BP)
 
 
-          X = full_join(X, aux2, by ="SNP")
+          X = full_join(X, aux2, by ="BP")
 
           # Write the file with PLINK and ANNOVAR data
           write.table(X, file = paste0("",out,"/aaclummerge.txt"), sep = " ",
@@ -287,20 +289,17 @@ VARI3 = function(bfile,
                                "ORl","Pl")
           seleccion$SNPA = seleccion$SNP
 
-          # Replace the chromosome to keep the position in the SNP column
-          for(ii in 22:1){
-            seleccion$SNP = gsub(paste0("",ii,":"), "", seleccion$SNP)
-          }
+
 
           # Format for ANNOVAR
           # We have to specify chr, start position, end position, reference allele (major), alternative allele (minor)
-          assocanovar = data.frame(seleccion$CHR,seleccion$SNP,seleccion$SNP,
+          assocanovar = data.frame(seleccion$CHR,seleccion$BP,seleccion$BP,
                                    seleccion$A2,seleccion$A1 , stringsAsFactors = F)
 
           # Format the file
           assocanovar$seleccion.CHR = as.numeric(assocanovar$seleccion.CHR)
-          assocanovar$seleccion.SNP = as.numeric(assocanovar$seleccion.SNP)
-          assocanovar$seleccion.SNP.1 = as.numeric(assocanovar$seleccion.SNP.1)
+          assocanovar$seleccion.BP = as.numeric(assocanovar$seleccion.BP)
+          assocanovar$seleccion.BP.1 = as.numeric(assocanovar$seleccion.BP.1)
           assocanovar$seleccion.A2 = gsub("   ", "", assocanovar$seleccion.A2)
           assocanovar$seleccion.A1 = gsub("   ", "", assocanovar$seleccion.A1)
 
@@ -354,20 +353,20 @@ VARI3 = function(bfile,
 
           # Mergue data frames
           aux = asevf[c("tipo", "ini")]
-          names(aux)[2] = "SNP"
-          aux$SNP = as.numeric(aux$SNP)
-          seleccion$SNP = as.numeric(seleccion$SNP)
+          names(aux)[2] = "BP"
+          aux$BP = as.numeric(aux$BP)
+          seleccion$BP = as.numeric(seleccion$BP)
 
           # Full_join by position
-          X = full_join(seleccion, aux, by ="SNP")
+          X = full_join(seleccion, aux, by ="BP")
 
           # Same for the other file
           aux2 = asvf[c("loc","gen","ini")]
-          names(aux2)[3] = "SNP"
-          aux2$SNP = as.numeric(aux2$SNP)
+          names(aux2)[3] = "BP"
+          aux2$BP = as.numeric(aux2$BP)
 
 
-          X = full_join(X, aux2, by ="SNP")
+          X = full_join(X, aux2, by ="BP")
 
           # Write the file with PLINK and ANNOVAR data
           write.table(X, file = paste0("",out,"/assocannovarmerge.txt"),
@@ -472,21 +471,17 @@ VARI3 = function(bfile,
                                       "F_U","A2","CHISQ","P","OR")
           assocclumpmergue$SNPA = assocclumpmergue$SNP
 
-          # Replace the chromosome to keep the position in the SNP column
-          for(ii in 22:1){
-            assocclumpmergue$SNP = gsub(paste0("",ii,":"), "", assocclumpmergue$SNP)
-          }
 
           # Format for ANNOVAR
           # We have to specify chr, start position, end position, reference allele (major), alternative allele (minor)
-          asclumpano = data.frame(assocclumpmergue$CHR,assocclumpmergue$SNP,
-                                  assocclumpmergue$SNP,assocclumpmergue$A2,
+          asclumpano = data.frame(assocclumpmergue$CHR,assocclumpmergue$BP,
+                                  assocclumpmergue$BP,assocclumpmergue$A2,
                                   assocclumpmergue$A1, stringsAsFactors = F)
 
           # Format the file
           asclumpano$assocclumpmergue.CHR = as.numeric(asclumpano$assocclumpmergue.CHR)
-          asclumpano$assocclumpmergue.SNP = as.numeric(asclumpano$assocclumpmergue.SNP)
-          asclumpano$assocclumpmergue.SNP.1 = as.numeric(asclumpano$assocclumpmergue.SNP.1)
+          asclumpano$assocclumpmergue.BP = as.numeric(asclumpano$assocclumpmergue.BP)
+          asclumpano$assocclumpmergue.BP.1 = as.numeric(asclumpano$assocclumpmergue.BP.1)
           asclumpano$assocclumpmergue.A2 = gsub("   ", "", asclumpano$assocclumpmergue.A2)
           asclumpano$assocclumpmergue.A1 = gsub("   ", "", asclumpano$assocclumpmergue.A1)
 
@@ -538,20 +533,20 @@ VARI3 = function(bfile,
 
           # Mergue data frames
           aux = asevf[c("tipo", "ini")]
-          names(aux)[2] = "SNP"
-          aux$SNP = as.numeric(aux$SNP)
-          assocclumpmergue$SNP = as.numeric(assocclumpmergue$SNP)
+          names(aux)[2] = "BP"
+          aux$BP = as.numeric(aux$BP)
+          assocclumpmergue$BP = as.numeric(assocclumpmergue$BP)
 
           # Full_join by position
-          X = full_join(assocclumpmergue, aux, by ="SNP")
+          X = full_join(assocclumpmergue, aux, by ="BP")
 
           # Same for the other file
           aux2 = asvf[c("loc","gen","ini")]
-          names(aux2)[3] = "SNP"
-          aux2$SNP = as.numeric(aux2$SNP)
+          names(aux2)[3] = "BP"
+          aux2$BP = as.numeric(aux2$BP)
 
 
-          X = full_join(X, aux2, by ="SNP")
+          X = full_join(X, aux2, by ="BP")
 
           # Write the file with PLINK and ANNOVAR data
           write.table(X, file = paste0("",out,"/aaclummerge.txt"),
@@ -620,21 +615,17 @@ VARI3 = function(bfile,
                                "F_U","A2","CHISQ","P","OR")
           seleccion$SNPA = seleccion$SNP
 
-          # Replace the chromosome to keep the position in the SNP column
-          for(ii in 22:1){
-            seleccion$SNP = gsub(paste0("",ii,":"), "", seleccion$SNP)
-          }
 
           # Format for ANNOVAR
           # We have to specify chr, start position, end position, reference allele (major), alternative allele (minor)
-          assocanovar = data.frame(seleccion$CHR,seleccion$SNP,
-                                   seleccion$SNP,seleccion$A2,
+          assocanovar = data.frame(seleccion$CHR,seleccion$BP,
+                                   seleccion$BP,seleccion$A2,
                                    seleccion$A1, stringsAsFactors = F)
 
           # Format the file
           assocanovar$seleccion.CHR = as.numeric(assocanovar$seleccion.CHR)
-          assocanovar$seleccion.SNP = as.numeric(assocanovar$seleccion.SNP)
-          assocanovar$seleccion.SNP.1 = as.numeric(assocanovar$seleccion.SNP.1)
+          assocanovar$seleccion.BP = as.numeric(assocanovar$seleccion.BP)
+          assocanovar$seleccion.BP.1 = as.numeric(assocanovar$seleccion.BP.1)
           assocanovar$seleccion.A2 = gsub("   ", "", assocanovar$seleccion.A2)
           assocanovar$seleccion.A1 = gsub("   ", "", assocanovar$seleccion.A1)
 
@@ -690,20 +681,20 @@ VARI3 = function(bfile,
 
           # Mergue data frames
           aux = asevf[c("tipo", "ini")]
-          names(aux)[2] = "SNP"
-          aux$SNP = as.numeric(aux$SNP)
-          seleccion$SNP = as.numeric(seleccion$SNP)
+          names(aux)[2] = "BP"
+          aux$BP = as.numeric(aux$BP)
+          seleccion$BP = as.numeric(seleccion$BP)
 
           # Full_join by position
-          X = full_join(seleccion, aux, by ="SNP")
+          X = full_join(seleccion, aux, by ="BP")
 
           # Same for the other file
           aux2 = asvf[c("loc","gen","ini")]
-          names(aux2)[3] = "SNP"
-          aux2$SNP = as.numeric(aux2$SNP)
+          names(aux2)[3] = "BP"
+          aux2$BP = as.numeric(aux2$BP)
 
 
-          X = full_join(X, aux2, by ="SNP")
+          X = full_join(X, aux2, by ="BP")
 
           # Write the file with PLINK and ANNOVAR data
           write.table(X, file = paste0("",out,"/assocannovarmerge.txt"),
@@ -814,19 +805,19 @@ VARI3 = function(bfile,
       X$SNPA = X$SNP
 
       # Replace the chromosome to keep the position in the SNP column
-      for(ii in 22:1){
-        X$SNP = gsub(paste0("",ii,":"), "", X$SNP)
-      }
+      # for(ii in 22:1){
+      #  X$SNP = gsub(paste0("",ii,":"), "", X$SNP)
+      #}
 
       # Format for ANNOVAR
       # We have to specify chr, start position, end position, reference allele (major), alternative allele (minor)
-      snpannovar = data.frame(X$CHR,X$SNP,X$SNP,X$A2,X$A1 , stringsAsFactors = F)
+      snpannovar = data.frame(X$CHR,X$BP,X$BP,X$A2,X$A1 , stringsAsFactors = F)
 
       # Format the file
 
       snpannovar$X.CHR = as.numeric(snpannovar$X.CHR)
-      snpannovar$X.SNP = as.numeric(snpannovar$X.SNP)
-      snpannovar$X.SNP.1 = as.numeric(snpannovar$X.SNP.1)
+      snpannovar$X.BP = as.numeric(snpannovar$X.BP)
+      snpannovar$X.BP.1 = as.numeric(snpannovar$X.BP.1)
       snpannovar$X.A2 = gsub("   ", "", snpannovar$X.A2)
       snpannovar$X.A1 = gsub("   ", "", snpannovar$X.A1)
 
@@ -884,35 +875,35 @@ VARI3 = function(bfile,
       if (length(asevf) != 0){
         # Mergue data frames
         aux = asevf[c("tipo", "ini")]
-        names(aux)[2] = "SNP"
-        aux$SNP = as.numeric(aux$SNP)
-        X$SNP = as.numeric(X$SNP)
+        names(aux)[2] = "BP"
+        aux$BP = as.numeric(aux$BP)
+        X$BP = as.numeric(X$BP)
         aux = unique(aux)
 
         # Full_join by position
-        X = full_join(X, aux, by ="SNP")
+        X = full_join(X, aux, by ="BP")
 
         # Same for the other file
         aux2 = asvf[c("loc","gen","ini")]
-        names(aux2)[3] = "SNP"
-        aux2$SNP = as.numeric(aux2$SNP)
+        names(aux2)[3] = "BP"
+        aux2$BP = as.numeric(aux2$BP)
         aux2 = unique(aux2)
 
-        X = full_join(X, aux2, by ="SNP")
+        X = full_join(X, aux2, by ="BP")
 
         # Write the file with PLINK and ANNOVAR data
         write.table(X, file = paste0("",out,"/snpepistasisannovar.txt"),
                     sep = " ", row.names = F, col.names = T, quote = F)
       }else{
         aux2 = asvf[c("loc","gen","ini")]
-        names(aux2)[3] = "SNP"
-        aux2$SNP = as.numeric(aux2$SNP)
-        X$SNP = as.numeric(X$SNP)
+        names(aux2)[3] = "BP"
+        aux2$BP = as.numeric(aux2$BP)
+        X$BP = as.numeric(X$BP)
         aux2 = unique(aux2)
 
 
 
-        X = full_join(X, aux2, by ="SNP")
+        X = full_join(X, aux2, by ="BP")
 
 
 
