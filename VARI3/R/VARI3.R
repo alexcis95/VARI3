@@ -183,6 +183,8 @@ VARI3 = function(bfile,
           # system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/assocannovar.exonic_variant_function"))
 
           names(asevf) = c("linea","tipo","gen","chr","ini","fin","ref","alt")
+          }else{
+          asevf = NULL
           }
           # Possible values in field "tipo" include: nonsynonymous, synonymous, frameshift insertion,
           # frameshift deletion, nonframeshift insertion, nonframeshift deletion, frameshift block substitution, nonframshift block substitution
