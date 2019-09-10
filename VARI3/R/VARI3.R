@@ -86,11 +86,11 @@ VARI3 = function(bfile,
 
         # Mergue assocrelevant and clump
         aux = clumpdata[c(1, 2,3)]
-        names(aux)[3] = "SNP"
-        names(assocrelevant)[2] = "SNP"
+        names(aux)[3] = "BP"
+        names(assocrelevant)[2] = "BP"
 
         # Full_join by position, in our case 437 variants
-        X = inner_join(assocrelevant, aux, by ="SNP")
+        X = inner_join(assocrelevant, aux, by ="BP")
 
         # si no covs 11 y 12 si covs 13, 14
         assocclumpmergue = X[,-c(13,14)]
@@ -124,6 +124,8 @@ VARI3 = function(bfile,
         } # Cierre if de clump si
 
         if (ANNOVAR){
+
+          assocclumpmergue <- na.omit(assocclumpmergue)
 
           # Format for ANNOVAR
           names(assocclumpmergue) =c("CHR","SNP","BP","A1","F_A",
@@ -804,8 +806,12 @@ VARI3 = function(bfile,
       # Read variants and annovar data
       assocrelevant100 = read_delim(paste0("",out,"/assocrelevant.txt"),
                                     delim = " ", col_types = "ncncnncnnn")
+
+      # Bernabe
       asclumanovar100= read_delim(paste0("",out,"/aaclummerge.txt"),
-                                  delim = " ", col_types = "nnncnncnnncccccc")
+                                  delim = " ", col_types = "ncncnncnnnnnccc")
+      #asclumanovar100= read_delim(paste0("",out,"/aaclummerge.txt"),
+      #                            delim = " ", col_types = "nnncnncnnncccccc")
 
 
 
@@ -937,20 +943,21 @@ VARI3 = function(bfile,
       #system(paste0("sed -i 's/\"//g' ",out,"/snpepistasisannovar.txt"))
       #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/snpepistasisannovar.txt"))
 
-
-      mergueprimarisnp = asclumanovar100[c(2,5,11,12,14,15,16)]
-      names(mergueprimarisnp) = c("SNP","F_A1","ORl1","Pl1","Tipo1","Loc1","Gen1")
-
-      mergueprimarisnp$SNP = as.numeric(mergueprimarisnp$SNP)
+      # Bernab
+      mergueprimarisnp = asclumanovar100[c(2,5,11,12,14,15)]
+      #mergueprimarisnp = asclumanovar100[c(2,5,11,12,14,15,16)]
+      #names(mergueprimarisnp) = c("SNP","F_A1","ORl1","Pl1","Tipo1","Loc1","Gen1")
+      names(mergueprimarisnp) = c("SNP","F_A1","ORl1","Pl1","Loc1","Gen1")
+      #mergueprimarisnp$SNP = as.numeric(mergueprimarisnp$SNP)
 
       episuc100$SNPA = episuc100[2]
 
       # Replace the chromosome to keep the position in the SNP column
-      for(ii in 22:1){
-        episuc100$SNP = gsub(paste0("",ii,":"), "", episuc100$SNP)
-      }
+      #for(ii in 22:1){
+      #  episuc100$SNP = gsub(paste0("",ii,":"), "", episuc100$SNP)
+      #}
 
-      episuc100$SNP = as.numeric(episuc100$SNP)
+      #episuc100$SNP = as.numeric(episuc100$SNP)
 
 
       # Full_join by position
@@ -969,12 +976,12 @@ VARI3 = function(bfile,
       m1$SNPA2 = m1[8]
 
       # Replace the chromosome to keep the position in the SNP column
-      for(ii in 22:1){
-        m1$BEST_SNP = gsub(paste0("",ii,":"), "", m1$BEST_SNP)
-      }
+     # for(ii in 22:1){
+    #    m1$BEST_SNP = gsub(paste0("",ii,":"), "", m1$BEST_SNP)
+     # }
 
-      m1$BEST_SNP = as.numeric(m1$BEST_SNP)
-      merguesecundarysnp$BEST_SNP = as.numeric(merguesecundarysnp$BEST_SNP)
+      #m1$BEST_SNP = as.numeric(m1$BEST_SNP)
+      #merguesecundarysnp$BEST_SNP = as.numeric(merguesecundarysnp$BEST_SNP)
 
       m2 = inner_join(m1, merguesecundarysnp, by ="BEST_SNP")
 
