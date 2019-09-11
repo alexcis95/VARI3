@@ -860,7 +860,7 @@ VARI3 = function(bfile,
       tx  = gsub(pattern = "SNV", replace = "", x = tx)
       tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
 
-      if (identical(tx, !character(0))){
+
         write.table(tx, file = paste0("",out,"/snpannovar.exonic_variant_function"),
                     sep = " ", row.names = F, col.names = F, quote = F)
 
@@ -874,8 +874,11 @@ VARI3 = function(bfile,
         #  Load in R ANNOVAR file
         asevf = read_delim(paste0("",out,"/snpannovar.exonic_variant_function"),
                            delim = " ", col_types = "cccccccc", col_names = F)
+        if (length(asevf) != 0){
         names(asevf) = c("linea","tipo","gen","chr","ini","fin","ref","alt")
-      }
+        }
+        # Revisar identical
+
 
       # Possible values in field "tipo" include: nonsynonymous, synonymous, frameshift insertion,
       # frameshift deletion, nonframeshift insertion, nonframeshift deletion, frameshift block substitution, nonframshift block substitution
@@ -985,11 +988,12 @@ VARI3 = function(bfile,
 
       m2 = inner_join(m1, merguesecundarysnp, by ="BEST_SNP")
 
+      # Arreglar que en primer punto no hay asevf
       if (length(asevf) != 0){
-        final = m2[c(10,6,17,16,23,11,12,13,14,15,18,19,20,21,22,9)]
+        final = m2[c(10,6,16,15,22,11,12,13,14,17,18,19,20,21,9)]
 
         names(final) = c("SNP", "CHISQ", "SNP2", "GEN1", "GEN2",
-                         "F_A1", "ORl1", "Pl1", "TIPO1", "LOC1",
+                         "F_A1", "ORl1", "Pl1", "LOC1",
                          "F_A2", "Pl2", "ORl2", "TIPO2", "LOC2", "TBf")
 
         final2 = as.matrix(final)
@@ -1053,7 +1057,8 @@ VARI3 = function(bfile,
 
         m5 = inner_join(final3, qf, by ="SNP")
 
-        epiinform = m5[c(1,2,14,15,3:13)]
+        # Cambio para tipo bernabe
+        epiinform = m5[c(1,2,15,16,3:14)]
         write.table(epiinform, file = paste0("",out,"/epiinform.txt"),
                     sep = " ", row.names = F, col.names = T, quote = F)
 
