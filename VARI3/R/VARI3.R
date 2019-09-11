@@ -1019,7 +1019,7 @@ VARI3 = function(bfile,
 
         m5 = inner_join(final3, qf, by ="SNP")
 
-        epiinform = m5[c(1,2,16,17,3:15)]
+        epiinform = m5[c(1,2,15,16,3:14)]
         write.table(epiinform, file = paste0("",out,"/epiinform.txt"),
                     sep = " ", row.names = F, col.names = T, quote = F)
 
