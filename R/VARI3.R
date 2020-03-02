@@ -529,11 +529,14 @@ VARI3 = function(bfile,
           # Remove the spaces and tabs to generate only simple spaces throughout the file
           #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/assocannovar.exonic_variant_function"))
 
+          # TIENE 0 EN ASEVF
           #  Load in R ANNOVAR file
           asevf = read_delim(paste0("",out,"/assocannovar.exonic_variant_function"),
                              delim = " ", col_types = "cccccccc", col_names = F)
-          names(asevf) = c("linea","tipo","gen","chr","ini","fin","ref","alt")
 
+          if (length(asevf) != 0){
+          names(asevf) = c("linea","tipo","gen","chr","ini","fin","ref","alt")
+          }
           # Possible values in field "tipo" include: nonsynonymous, synonymous, frameshift insertion,
           # frameshift deletion, nonframeshift insertion, nonframeshift deletion, frameshift block substitution, nonframshift block substitution
 
@@ -548,27 +551,51 @@ VARI3 = function(bfile,
                             delim = " ", col_types = "ccccccc", col_names = F)
           names(asvf) = c("loc","gen","chr","ini","fin","ref","alt")
 
+          #
 
-          # Mergue data frames
-          aux = asevf[c("tipo", "ini")]
-          names(aux)[2] = "BP"
-          aux$BP = as.numeric(aux$BP)
-          assocclumpmergue$BP = as.numeric(assocclumpmergue$BP)
+          if (length(asevf) != 0){
+            aux = asevf[c("tipo", "ini")]
+            names(aux)[2] = "BP"
+            aux$BP = as.numeric(aux$BP)
+            assocclumpmergue$BP = as.numeric(assocclumpmergue$BP)
+            aux = unique(aux)
 
-          # Full_join by position
-          X = full_join(assocclumpmergue, aux, by ="BP")
+            # Full_join by position
+            X = full_join(assocclumpmergue, aux, by ="BP")
 
-          # Same for the other file
-          aux2 = asvf[c("loc","gen","ini")]
-          names(aux2)[3] = "BP"
-          aux2$BP = as.numeric(aux2$BP)
+            # Same for the other file
+            aux2 = asvf[c("loc","gen","ini")]
+            names(aux2)[3] = "BP"
+            aux2$BP = as.numeric(aux2$BP)
+            aux2 = unique(aux2)
 
 
-          X = full_join(X, aux2, by ="BP")
+            X = full_join(X, aux2, by ="BP")
 
-          # Write the file with PLINK and ANNOVAR data
-          write.table(X, file = paste0("",out,"/aaclummerge.txt"),
-                      sep = " ", row.names = F, col.names = T, quote = F)
+            # Write the file with PLINK and ANNOVAR data
+            write.table(X, file = paste0("",out,"/aaclummerge.txt"), sep = " ",
+                        row.names = F, col.names = T, quote = F)
+          }else{
+            aux2 = asvf[c("loc","gen","ini")]
+            names(aux2)[3] = "BP"
+            aux2$BP = as.numeric(aux2$BP)
+            assocclumpmergue$BP = as.numeric(assocclumpmergue$BP)
+            aux2 = unique(aux2)
+
+
+
+            X = full_join(assocclumpmergue, aux2, by ="BP")
+
+
+
+
+            # Write the file with PLINK and ANNOVAR data
+            write.table(X, file = paste0("",out,"/aaclummerge.txt"),
+                        sep = " ", row.names = F, col.names = T, quote = F)
+          }
+          #
+
+
 
           tx  = readLines(paste0("",out,"/aaclummerge.txt"))
           tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
