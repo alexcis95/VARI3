@@ -36,7 +36,7 @@ VARI3 = function(bfile,
                         clump = T,
                         build = "hg19",
                         db = "../../Doctorado/Annovar/annovar.latest/annovar/humandb/",
-                        Wu = T,
+                          Wu = T,
                         covar = NULL,
                         ncov = "1-2",
                         AsT = 0.0001,
@@ -1144,19 +1144,19 @@ VARI3 = function(bfile,
       X$SNPA = X$SNP
 
       # Replace the chromosome to keep the position in the SNP column
-      for(ii in 22:1){
-        X$SNP = gsub(paste0("",ii,":"), "", X$SNP)
-      }
+    #  for(ii in 22:1){
+    #    X$SNP = gsub(paste0("",ii,":"), "", X$SNP)
+     # }
 
       # Format for ANNOVAR
       # We have to specify chr, start position, end position, reference allele (major), alternative allele (minor)
-      snpannovar = data.frame(X$CHR,X$SNP,X$SNP,X$A2,X$A1 , stringsAsFactors = F)
+      snpannovar = data.frame(X$CHR,X$BP,X$BP,X$A2,X$A1 , stringsAsFactors = F)
 
       # Format the file
 
       snpannovar$X.CHR = as.numeric(snpannovar$X.CHR)
-      snpannovar$X.SNP = as.numeric(snpannovar$X.SNP)
-      snpannovar$X.SNP.1 = as.numeric(snpannovar$X.SNP.1)
+      snpannovar$X.BP = as.numeric(snpannovar$X.BP)
+      snpannovar$X.BP.1 = as.numeric(snpannovar$X.BP.1)
       snpannovar$X.A2 = gsub("   ", "", snpannovar$X.A2)
       snpannovar$X.A1 = gsub("   ", "", snpannovar$X.A1)
 
@@ -1178,7 +1178,6 @@ VARI3 = function(bfile,
       tx  = gsub(pattern = "SNV", replace = "", x = tx)
       tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
 
-      if (identical(tx, !character(0))){
         write.table(tx, file = paste0("",out,"/snpannovar.exonic_variant_function"),
                     sep = " ", row.names = F, col.names = F, quote = F)
 
@@ -1192,6 +1191,7 @@ VARI3 = function(bfile,
         #  Load in R ANNOVAR file
         asevf = read_delim(paste0("",out,"/snpannovar.exonic_variant_function"),
                            delim = " ", col_types = "cccccccc", col_names = F)
+        if (length(asevf) != 0){
         names(asevf) = c("linea","tipo","gen","chr","ini","fin","ref","alt")
       }
 
@@ -1236,14 +1236,14 @@ VARI3 = function(bfile,
                     sep = " ", row.names = F, col.names = T, quote = F)
       }else{
         aux2 = asvf[c("loc","gen","ini")]
-        names(aux2)[3] = "SNP"
-        aux2$SNP = as.numeric(aux2$SNP)
-        X$SNP = as.numeric(X$SNP)
+        names(aux2)[3] = "BP"
+        aux2$BP = as.numeric(aux2$BP)
+        X$BP = as.numeric(X$BP)
         aux2 = unique(aux2)
 
 
 
-        X = full_join(X, aux2, by ="SNP")
+        X = full_join(X, aux2, by ="BP")
 
 
 
@@ -1262,19 +1262,24 @@ VARI3 = function(bfile,
       #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/snpepistasisannovar.txt"))
 
 
+      # ESTO ES LO NORMAL mergueprimarisnp = asclumanovar100[c(2,5,10,9,12,13,14)]
+      if (length(asevf) != 0){
       mergueprimarisnp = asclumanovar100[c(2,5,10,9,12,13,14)]
       names(mergueprimarisnp) = c("SNP","F_A1","OR1","P1","Tipo1","Loc1","Gen1")
-
-      mergueprimarisnp$SNP = as.numeric(mergueprimarisnp$SNP)
+      } else{ # IREM
+      mergueprimarisnp = asclumanovar100[c(11,5,10,9,12,13)]
+      names(mergueprimarisnp) = c("SNP","F_A1","OR1","P1","Loc1","Gen1")
+      }
+      #mergueprimarisnp$SNP = as.numeric(mergueprimarisnp$SNP)
 
       episuc100$SNPA = episuc100[2]
 
       # Replace the chromosome to keep the position in the SNP column
-      for(ii in 22:1){
-        episuc100$SNP = gsub(paste0("",ii,":"), "", episuc100$SNP)
-      }
+     # for(ii in 22:1){
+     #    episuc100$SNP = gsub(paste0("",ii,":"), "", episuc100$SNP)
+      #}
 
-      episuc100$SNP = as.numeric(episuc100$SNP)
+      #episuc100$SNP = as.numeric(episuc100$SNP)
 
 
       # Full_join by position
@@ -1293,12 +1298,12 @@ VARI3 = function(bfile,
       m1$SNPA2 = m1[8]
 
       # Replace the chromosome to keep the position in the SNP column
-      for(ii in 22:1){
-        m1$BEST_SNP = gsub(paste0("",ii,":"), "", m1$BEST_SNP)
-      }
+     # for(ii in 22:1){
+      #  m1$BEST_SNP = gsub(paste0("",ii,":"), "", m1$BEST_SNP)
+      #}
 
-      m1$BEST_SNP = as.numeric(m1$BEST_SNP)
-      merguesecundarysnp$BEST_SNP = as.numeric(merguesecundarysnp$BEST_SNP)
+      #m1$BEST_SNP = as.numeric(m1$BEST_SNP)
+      #merguesecundarysnp$BEST_SNP = as.numeric(merguesecundarysnp$BEST_SNP)
 
       m2 = inner_join(m1, merguesecundarysnp, by ="BEST_SNP")
 
@@ -1341,7 +1346,7 @@ VARI3 = function(bfile,
         write.table(tx, file = paste0("",out,"/epiinform.txt"),
                     sep = " ", row.names = F, col.names = F, quote = F)
       }else{
-        final = m2[c(10,6,17,16,22,11,12,13,15,18,19,20,21,9)]
+        final = m2[c(2,6,16,15,21,11,12,13,14,17,18,19,20,9)]
 
         names(final) = c("SNP", "CHISQ", "SNP2", "GEN1", "GEN2",
                          "F_A1", "OR1", "P1", "LOC1",
