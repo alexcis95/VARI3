@@ -1055,11 +1055,12 @@ VARI3 = function(bfile,
         write.table(tx, file = paste0("",out,"/epiinform.txt"),
                     sep = " ", row.names = F, col.names = F, quote = F)
       }else{
-        final = m2[c(10,6,17,16,22,11,12,13,15,18,19,20,21,9)]
+        final = m2[c(10,6,16,15,21,11,12,13,14,17,18,29,20,9)]
 
         names(final) = c("SNP", "CHISQ", "SNP2", "GEN1", "GEN2",
                          "F_A1", "ORl1", "Pl1", "LOC1",
                          "F_A2", "Pl2", "ORl2", "LOC2", "TBf")
+
 
         final2 = as.matrix(final)
 
@@ -1085,7 +1086,7 @@ VARI3 = function(bfile,
         m5 = inner_join(final3, qf, by ="SNP")
 
         # Cambio para tipo bernabe
-        epiinform = m5[c(1,2,15,16,3:14)]
+        epiinform = m5[c(1,2,14,15,3:13)]
         write.table(epiinform, file = paste0("",out,"/epiinform.txt"),
                     sep = " ", row.names = F, col.names = T, quote = F)
 
