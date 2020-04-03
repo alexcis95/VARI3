@@ -1055,7 +1055,7 @@ VARI3 = function(bfile,
         write.table(tx, file = paste0("",out,"/epiinform.txt"),
                     sep = " ", row.names = F, col.names = F, quote = F)
       }else{
-        final = m2[c(10,6,16,15,21,11,12,13,14,17,18,29,20,9)]
+        final = m2[c(10,6,16,15,21,11,12,13,14,17,18,19,20,9)]
 
         names(final) = c("SNP", "CHISQ", "SNP2", "GEN1", "GEN2",
                          "F_A1", "ORl1", "Pl1", "LOC1",
