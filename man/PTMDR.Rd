@@ -4,8 +4,16 @@
 \alias{PTMDR}
 \title{PTMDR}
 \usage{
-PTMDR(bfile, epii = NULL, epiall, snp, snplist = NULL,
-  plink = "plink", out = ".", bernabe = NULL)
+PTMDR(
+  bfile,
+  epii = NULL,
+  epiall,
+  snp,
+  snplist = NULL,
+  plink = "plink",
+  out = ".",
+  bernabe = NULL
+)
 }
 \arguments{
 \item{bfile}{The bfile variable is required, the user needs to define the path and name of the Plink bfile (bed, bim and fam) without the extension, the three files must be named in the same way. For example genotype.bed, genotype.bim, genotype.fam the variable bfile would be (bfile = "genotype").}

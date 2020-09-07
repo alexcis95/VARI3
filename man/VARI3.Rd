@@ -4,12 +4,24 @@
 \alias{VARI3}
 \title{VARI3}
 \usage{
-VARI3(bfile, out = ".", primarylist = NULL, genelist = NULL,
-  plink = "plink", core = detectCores() - 1,
-  varpl = "annotate_variation.pl", ANNOVAR = T, clump = T,
+VARI3(
+  bfile,
+  out = ".",
+  primarylist = NULL,
+  genelist = NULL,
+  plink = "plink",
+  core = detectCores() - 1,
+  varpl = "annotate_variation.pl",
+  ANNOVAR = T,
+  clump = T,
   build = "hg19",
   db = "../../Doctorado/Annovar/annovar.latest/annovar/humandb/",
-  Wu = T, covar = NULL, ncov = "1-2", AsT = 1e-04, MAF = 0.01)
+  Wu = T,
+  covar = NULL,
+  ncov = "1-2",
+  AsT = 1e-04,
+  MAF = 0.01
+)
 }
 \arguments{
 \item{bfile}{The bfile variable is required, the user needs to define the path and name of the Plink bfile (bed, bim and fam) without the extension, the three files must be named in the same way. For example genotype.bed, genotype.bim, genotype.fam the variable bfile would be (bfile = "genotype").}

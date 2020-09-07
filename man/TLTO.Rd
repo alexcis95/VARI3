@@ -4,8 +4,7 @@
 \alias{TLTO}
 \title{TLTO}
 \usage{
-TLTO(l1, l2, bfile, out = ".", core = detectCores() - 1,
-  plink = "plink")
+TLTO(l1, l2, bfile, out = ".", core = detectCores() - 1, plink = "plink")
 }
 \arguments{
 \item{l1}{The l1 variable is required, the user have to specify the SNPs position. For example, l1 = "5:141025162".}
