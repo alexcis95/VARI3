@@ -24,7 +24,7 @@ VSNP3 = function(bfile,
                  plink = "plink",
                  core = detectCores() -1,
                  varpl = "annotate_variation.pl",
-                 ANNOVAR = T,
+                 ANNOVAR = F,
                  build = "hg19",
                  db = "../../Doctorado/Annovar/annovar.latest/annovar/humandb/") {
    
@@ -46,7 +46,8 @@ VSNP3 = function(bfile,
       assocrelevant = inner_join(assoc, listasnps, by ="SNP")
       
         
-          
+      if (ANNOVAR){    
+      
           assocclumpmergue <- na.omit(assocrelevant)
           
           # Format for ANNOVAR
@@ -168,308 +169,438 @@ VSNP3 = function(bfile,
           
           #system(paste0("sed -i 's/\"//g' ",out,"/epistasisrset.set"))
           
-    
-    
-      
-      # Generation of epistasis with WU joint effects correction (Same as CASSI, does not test for set so we have to use PLINK) Joint-effects applies correction that there are 5 per cell of the contingency table.
-      system(paste0("",plink," --bfile ",bfile," --fast-epistasis joint-effects --set-test --set ",out,"/epistasisrset.set --out ",out,"/episelecrjoint --threads ",core,""))
- 
-    
-    
-    tx  = readLines(paste0("",out,"/episelecrjoint.epi.cc.summary"))
-    tx  = gsub(pattern = "\"", replace = "", x = tx)
-    tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
-    write.table(tx, file = paste0("",out,"/episelecrjoint.epi.cc.summary"),
-                sep = " ", row.names = F, col.names = F, quote = F)
-    
-    tx  = readLines(paste0("",out,"/episelecrjoint.epi.cc"))
-    tx  = gsub(pattern = "\"", replace = "", x = tx)
-    tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
-    write.table(tx, file = paste0("",out,"/episelecrjoint.epi.cc"),
-                sep = " ", row.names = F, col.names = F, quote = F)
-    
-   
-    
-    if (ANNOVAR & is.null(covar) & clump){
+          
+          
+          # Generation of epistasis with WU joint effects correction (Same as CASSI, does not test for set so we have to use PLINK) Joint-effects applies correction that there are 5 per cell of the contingency table.
+          system(paste0("",plink," --bfile ",bfile," --fast-epistasis joint-effects --set-test --set ",out,"/epistasisrset.set --out ",out,"/episelecrjoint --threads ",core,""))
+          
+          
+          
+          tx  = readLines(paste0("",out,"/episelecrjoint.epi.cc.summary"))
+          tx  = gsub(pattern = "\"", replace = "", x = tx)
+          tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
+          write.table(tx, file = paste0("",out,"/episelecrjoint.epi.cc.summary"),
+                      sep = " ", row.names = F, col.names = F, quote = F)
+          
+          tx  = readLines(paste0("",out,"/episelecrjoint.epi.cc"))
+          tx  = gsub(pattern = "\"", replace = "", x = tx)
+          tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
+          write.table(tx, file = paste0("",out,"/episelecrjoint.epi.cc"),
+                      sep = " ", row.names = F, col.names = F, quote = F)
+          
+        
+            
+            # Read assoc data
+            assocall100 = assoc
+            
+            system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/episelecrjoint.epi.cc.summary"))  
+            system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/episelecrjoint.epi.cc"))  
+            
+            # Read epistasis results
+            episuc100 = read_delim(paste0("",out,"/episelecrjoint.epi.cc.summary"),
+                                   delim = " ", col_types = "ncnnnnnc")
+            names(episuc100) = c("CHR", "SNP", "N_SIG", "N_TOT", "PROP", "BEST_CHISQ", "BEST_CHR", "BEST_SNP")
+            episuc100 = mutate(episuc100, TBf = 0.05/episuc100$N_TOT)
+            names(episuc100) = c("CHR", "SNP", "N_SIG", "N_TOT", "PROP", "BEST_CHISQ", "BEST_CHR", "BEST_SNP", "TBf")
+            
+            # Read variants and annovar data
+            assocrelevant100 = assocrelevant
+            asclumanovar100 = asclumanovar
+            
+            
+            
+            # Keep the epistasis SNP and mergue with assoc data
+            
+            aux = episuc100[8]
+            names(aux) = "SNP"
+            names(assocall100)[2] = "SNP"
+            
+            # Full_join by position
+            X = inner_join(assocall100, aux, by ="SNP")
+            
+            names(X) = c("CHR", "SNP", "BP", "A1", "F_A", "F_U", "A2", "CHISQ", "P", "OR")
+            
+            X$SNPA = X$SNP
+            
+            # Replace the chromosome to keep the position in the SNP column
+            #  for(ii in 22:1){
+            #    X$SNP = gsub(paste0("",ii,":"), "", X$SNP)
+            # }
+            
+            # Format for ANNOVAR
+            # We have to specify chr, start position, end position, reference allele (major), alternative allele (minor)
+            snpannovar = data.frame(X$CHR,X$BP,X$BP,X$A2,X$A1 , stringsAsFactors = F)
+            
+            # Format the file
+            
+            snpannovar$X.CHR = as.numeric(snpannovar$X.CHR)
+            snpannovar$X.BP = as.numeric(snpannovar$X.BP)
+            snpannovar$X.BP.1 = as.numeric(snpannovar$X.BP.1)
+            
+            
+            # Write the file that is the ANNOVAR input
+            write.table(snpannovar, file = paste0("",out,"/snpannovar.txt"),
+                        sep = " ", row.names = F, col.names = F, quote = F)
+            
+            # me he quedado aqui REVISANDO
+            
+            # Remove quotes from the file
+            #system(paste0("sed -i 's/\"//g' ",out,"/snpannovar.txt"))
+            
+            # ANNOVAR command:
+            # annotate_variation.pl -out c1controlesannovar -build hg19 chr1controlesannovar.txt Doctorado/Annovar/annovar.latest/annovar/humandb/
+            system(paste0("",varpl," -out ",out,"/snpannovar -build ",build," ",out,"/snpannovar.txt ",db,""))
+            
+            
+            tx  = readLines(paste0("",out,"/snpannovar.exonic_variant_function"))
+            tx  = gsub(pattern = "SNV", replace = "", x = tx)
+            tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
+            
+            write.table(tx, file = paste0("",out,"/snpannovar.exonic_variant_function"),
+                        sep = " ", row.names = F, col.names = F, quote = F)
+            
+            
+            # Remove "SNV" from the file
+            #system(paste0("sed -i 's/SNV//g' ",out,"/snpannovar.exonic_variant_function"))
+            
+            # Remove the spaces and tabs to generate only simple spaces throughout the file
+            #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/snpannovar.exonic_variant_function"))
+            
+            #  Load in R ANNOVAR file
+            asevf = read_delim(paste0("",out,"/snpannovar.exonic_variant_function"),
+                               delim = " ", col_types = "cccccccc", col_names = F)
+            if (length(asevf) != 0){
+              names(asevf) = c("linea","tipo","gen","chr","ini","fin","ref","alt")
+            }
+            
+            # Possible values in field "tipo" include: nonsynonymous, synonymous, frameshift insertion,
+            # frameshift deletion, nonframeshift insertion, nonframeshift deletion, frameshift block substitution, nonframshift block substitution
+            
+            tx  = readLines(paste0("",out,"/snpannovar.variant_function"))
+            tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
+            write.table(tx, file = paste0("",out,"/snpannovar.variant_function"),
+                        sep = " ", row.names = F, col.names = F, quote = F)
+            
+            
+            
+            # Same for the other file
+            #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/snpannovar.variant_function"))
+            asvf = read_delim(paste0("",out,"/snpannovar.variant_function"),
+                              delim = " ", col_types = "ccccccc", col_names = F)
+            names(asvf) = c("loc","gen","chr","ini","fin","ref","alt")
+            
+            #
+            if (length(asevf) != 0){
+              # Mergue data frames
+              aux = asevf[c("tipo", "ini")]
+              names(aux)[2] = "SNP"
+              aux$SNP = as.numeric(aux$SNP)
+              X$SNP = as.numeric(X$SNP)
+              aux = unique(aux)
+              
+              # Full_join by position
+              X = full_join(X, aux, by ="SNP")
+              
+              # Same for the other file
+              aux2 = asvf[c("loc","gen","ini")]
+              names(aux2)[3] = "SNP"
+              aux2$SNP = as.numeric(aux2$SNP)
+              aux2 = unique(aux2)
+              
+              X = full_join(X, aux2, by ="SNP")
+              
+              # Write the file with PLINK and ANNOVAR data
+              write.table(X, file = paste0("",out,"/snpepistasisannovar.txt"),
+                          sep = " ", row.names = F, col.names = T, quote = F)
+            }else{
+              aux2 = asvf[c("loc","gen","ini")]
+              names(aux2)[3] = "BP"
+              aux2$BP = as.numeric(aux2$BP)
+              X$BP = as.numeric(X$BP)
+              aux2 = unique(aux2)
+              
+              
+              
+              X = full_join(X, aux2, by ="BP")
+              
+              
+              
+              
+              # Write the file with PLINK and ANNOVAR data
+              write.table(X, file = paste0("",out,"/snpepistasisannovar.txt"),
+                          sep = " ", row.names = F, col.names = T, quote = F)
+            }
+            
+            tx  = readLines(paste0("",out,"/snpepistasisannovar.txt"))
+            tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
+            write.table(tx, file = paste0("",out,"/snpepistasisannovar.txt"),
+                        sep = " ", row.names = F, col.names = F, quote = F)
+            
+            #system(paste0("sed -i 's/\"//g' ",out,"/snpepistasisannovar.txt"))
+            #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/snpepistasisannovar.txt"))
+            
+            
+            # ESTO ES LO NORMAL mergueprimarisnp = asclumanovar100[c(2,5,10,9,12,13,14)]
+            if (length(asevf) != 0){
+              mergueprimarisnp = asclumanovar100[c(2,5,10,9,12,13,14)]
+              names(mergueprimarisnp) = c("SNP","F_A1","OR1","P1","Tipo1","Loc1","Gen1")
+            } else{ # IREM
+              mergueprimarisnp = asclumanovar100[c(11,5,10,9,12,13)]
+              names(mergueprimarisnp) = c("SNP","F_A1","OR1","P1","Loc1","Gen1")
+            }
+            #mergueprimarisnp$SNP = as.numeric(mergueprimarisnp$SNP)
+            
+            episuc100$SNPA = episuc100[2]
+            
+            # Replace the chromosome to keep the position in the SNP column
+            # for(ii in 22:1){
+            #    episuc100$SNP = gsub(paste0("",ii,":"), "", episuc100$SNP)
+            #}
+            
+            #episuc100$SNP = as.numeric(episuc100$SNP)
+            
+            
+            # Full_join by position
+            m1 = inner_join(episuc100, mergueprimarisnp, by ="SNP")
+            
+            if (length(asevf) != 0){
+              merguesecundarysnp = X[c(2,5,9,10,12,13,14)]
+              
+              names(merguesecundarysnp)= c("BEST_SNP","F_A2","P2", "OR2", "Tipo2", "Loc2", "Gen2")
+            } else{
+              merguesecundarysnp = X[c(2,5,9,10,12,13)]
+              
+              names(merguesecundarysnp)= c("BEST_SNP","F_A2","P2", "OR2", "Loc2", "Gen2")
+            }
+            
+            m1$SNPA2 = m1[8]
+            
+            # Replace the chromosome to keep the position in the SNP column
+            # for(ii in 22:1){
+            #  m1$BEST_SNP = gsub(paste0("",ii,":"), "", m1$BEST_SNP)
+            #}
+            
+            #m1$BEST_SNP = as.numeric(m1$BEST_SNP)
+            #merguesecundarysnp$BEST_SNP = as.numeric(merguesecundarysnp$BEST_SNP)
+            
+            m2 = inner_join(m1, merguesecundarysnp, by ="BEST_SNP")
+            
+            if (length(asevf) != 0){
+              final = m2[c(10,6,17,16,23,11,12,13,14,15,18,19,20,21,22,9)]
+              
+              names(final) = c("SNP", "CHISQ", "SNP2", "GEN1", "GEN2",
+                               "F_A1", "OR1", "P1", "TIPO1", "LOC1",
+                               "F_A2", "P2", "OR2", "TIPO2", "LOC2", "TBf")
+              
+              final2 = as.matrix(final)
+              
+              final3 = as.data.frame(final2)
+              
+              # To keep p.value
+              episuc100 = read_delim(paste0("",out,"/episelecrjoint.epi.cc.summary"),
+                                     delim = " ", col_types = "ncnnnnnc")
+              names(episuc100) = c("CHR", "SNP", "N_SIG", "N_TOT", "PROP", "BEST_CHISQ", "BEST_CHR", "BEST_SNP")
+              episet = episuc100
+              epirep = episet[c(2,8)]
+              epipvalue = read_delim(paste0("",out,"/episelecrjoint.epi.cc"),
+                                     delim = " ", col_types = "ncncnn")
+              names(epipvalue) = c("CHR1", "SNP1", "CHR2", "SNP2", "STAT", "P")
+              
+              
+              
+              quiero = filter(epipvalue, epipvalue$SNP1 %in% epirep$SNP & epipvalue$SNP2 %in% epirep$BEST_SNP)
+              quiero = mutate(quiero, deseo = paste(SNP1,SNP2))
+              episet = mutate(episet, deseo = paste(SNP,BEST_SNP))
+              qf = filter(quiero, quiero$deseo %in% episet$deseo)
+              qf = qf[c(2,6)]
+              names(qf) = c("SNP", "Pepi")
+              
+              m5 = inner_join(final3, qf, by ="SNP")
+              
+              epiinform = m5[c(1,2,16,17,3:15)]
+              write.table(epiinform, file = paste0("",out,"/epiinform.txt"),
+                          sep = " ", row.names = F, col.names = T, quote = F)
+              
+              tx  = readLines(paste0("",out,"//epiinform.txt"))
+              tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
+              write.table(tx, file = paste0("",out,"/epiinform.txt"),
+                          sep = " ", row.names = F, col.names = F, quote = F)
+            }else{
+              final = m2[c(2,6,16,15,21,11,12,13,14,17,18,19,20,9)]
+              
+              names(final) = c("SNP", "CHISQ", "SNP2", "GEN1", "GEN2",
+                               "F_A1", "OR1", "P1", "LOC1",
+                               "F_A2", "P2", "OR2", "LOC2", "TBf")
+              
+              final2 = as.matrix(final)
+              
+              final3 = as.data.frame(final2)
+              
+              # To keep p.value
+              episuc100 = read_delim(paste0("",out,"/episelecrjoint.epi.cc.summary"),
+                                     delim = " ", col_types = "ncnnnnnc")
+              names(episuc100) = c("CHR", "SNP", "N_SIG", "N_TOT", "PROP", "BEST_CHISQ", "BEST_CHR", "BEST_SNP")
+              episet = episuc100
+              epirep = episet[c(2,8)]
+              epipvalue = read_delim(paste0("",out,"/episelecrjoint.epi.cc"),
+                                     delim = " ", col_types = "ncncnn")
+              names(epipvalue) = c("CHR1", "SNP1", "CHR2", "SNP2", "STAT", "P")
+              
+              quiero = filter(epipvalue, epipvalue$SNP1 %in% epirep$SNP & epipvalue$SNP2 %in% epirep$BEST_SNP)
+              quiero = mutate(quiero, deseo = paste(SNP1,SNP2))
+              episet = mutate(episet, deseo = paste(SNP,BEST_SNP))
+              qf = filter(quiero, quiero$deseo %in% episet$deseo)
+              qf = qf[c(2,6)]
+              names(qf) = c("SNP", "Pepi")
+              
+              m5 = inner_join(final3, qf, by ="SNP")
+              
+              epiinform = m5[c(1,2,14,15,3:13)]
+              write.table(epiinform, file = paste0("",out,"/epiinform.txt"),
+                          sep = " ", row.names = F, col.names = T, quote = F)
+              
+              tx  = readLines(paste0("",out,"//epiinform.txt"))
+              tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
+              write.table(tx, file = paste0("",out,"/epiinform.txt"),
+                          sep = " ", row.names = F, col.names = F, quote = F)
+              
+            }
+            
+            
+          }else{
+            
+            # Make the set of SNPs to do epistasis analysis
+            write.table(c("SET", assocrelevant$SNP, "END", "SET2", assocrelevant$SNP, "END"),
+                        file = paste0("",out,"/epistasisrset.set"),
+                        sep = " ", row.names = F, col.names = F, quote = F)
+            
+            
+            # Generation of epistasis with WU joint effects correction (Same as CASSI, does not test for set so we have to use PLINK) Joint-effects applies correction that there are 5 per cell of the contingency table.
+            system(paste0("",plink," --bfile ",bfile," --fast-epistasis joint-effects --set-test --set ",out,"/epistasisrset.set --out ",out,"/episelecrjoint --threads ",core,""))
+            
+            
+            
+            tx  = readLines(paste0("",out,"/episelecrjoint.epi.cc.summary"))
+            tx  = gsub(pattern = "\"", replace = "", x = tx)
+            tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
+            write.table(tx, file = paste0("",out,"/episelecrjoint.epi.cc.summary"),
+                        sep = " ", row.names = F, col.names = F, quote = F)
+            
+            tx  = readLines(paste0("",out,"/episelecrjoint.epi.cc"))
+            tx  = gsub(pattern = "\"", replace = "", x = tx)
+            tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
+            write.table(tx, file = paste0("",out,"/episelecrjoint.epi.cc"),
+                        sep = " ", row.names = F, col.names = F, quote = F)
+            
+            
+            # Read assoc data
+            assocall100 = assoc
+            
+            system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/episelecrjoint.epi.cc.summary"))  
+            system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/episelecrjoint.epi.cc"))  
+            
+            # Read epistasis results
+            episuc100 = read_delim(paste0("",out,"/episelecrjoint.epi.cc.summary"),
+                                   delim = " ", col_types = "ncnnnnnc")
+            names(episuc100) = c("CHR", "SNP", "N_SIG", "N_TOT", "PROP", "BEST_CHISQ", "BEST_CHR", "BEST_SNP")
+            episuc100 = mutate(episuc100, TBf = 0.05/episuc100$N_TOT)
+            names(episuc100) = c("CHR", "SNP", "N_SIG", "N_TOT", "PROP", "BEST_CHISQ", "BEST_CHR", "BEST_SNP", "TBf")
+            
+            # Read variants and annovar data
+            assocrelevant100 = assocrelevant
+            #asclumanovar100 = asclumanovar
+            
+            
+            
+            # Keep the epistasis SNP and mergue with assoc data
+            
+            aux = episuc100[8]
+            names(aux) = "SNP"
+            names(assocall100)[2] = "SNP"
+            
+            # Full_join by position
+            X = inner_join(assocall100, aux, by ="SNP")
+            
+            names(X) = c("CHR", "SNP", "BP", "A1", "F_A", "F_U", "A2", "CHISQ", "P", "OR")
+            
+            X$SNPA = X$SNP
+            
+          
+           
+            
+        
+              mergueprimarisnp = assocrelevant100[c(2,5,10,9)]
+              names(mergueprimarisnp) = c("SNP","F_A1","OR1","P1")
+           
+            episuc100$SNPA = episuc100[2]
+            
 
-      # Read assoc data
-      assocall100 = assoc
-      
-      system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/episelecrjoint.epi.cc.summary"))  
-      system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/episelecrjoint.epi.cc"))  
-      
-      # Read epistasis results
-      episuc100 = read_delim(paste0("",out,"/episelecrjoint.epi.cc.summary"),
-                             delim = " ", col_types = "ncnnnnnc")
-      names(episuc100) = c("CHR", "SNP", "N_SIG", "N_TOT", "PROP", "BEST_CHISQ", "BEST_CHR", "BEST_SNP")
-      episuc100 = mutate(episuc100, TBf = 0.05/episuc100$N_TOT)
-      names(episuc100) = c("CHR", "SNP", "N_SIG", "N_TOT", "PROP", "BEST_CHISQ", "BEST_CHR", "BEST_SNP", "TBf")
-      
-      # Read variants and annovar data
-      assocrelevant100 = assocrelevant
-      asclumanovar100 = asclumanovar
-      
-      
-      
-      # Keep the epistasis SNP and mergue with assoc data
-      
-      aux = episuc100[8]
-      names(aux) = "SNP"
-      names(assocall100)[2] = "SNP"
-      
-      # Full_join by position
-      X = inner_join(assocall100, aux, by ="SNP")
-      
-      names(X) = c("CHR", "SNP", "BP", "A1", "F_A", "F_U", "A2", "CHISQ", "P", "OR")
-      
-      X$SNPA = X$SNP
-      
-      # Replace the chromosome to keep the position in the SNP column
-      #  for(ii in 22:1){
-      #    X$SNP = gsub(paste0("",ii,":"), "", X$SNP)
-      # }
-      
-      # Format for ANNOVAR
-      # We have to specify chr, start position, end position, reference allele (major), alternative allele (minor)
-      snpannovar = data.frame(X$CHR,X$BP,X$BP,X$A2,X$A1 , stringsAsFactors = F)
-      
-      # Format the file
-      
-      snpannovar$X.CHR = as.numeric(snpannovar$X.CHR)
-      snpannovar$X.BP = as.numeric(snpannovar$X.BP)
-      snpannovar$X.BP.1 = as.numeric(snpannovar$X.BP.1)
+            
+            
+            # Full_join by position
+            m1 = inner_join(episuc100, mergueprimarisnp, by ="SNP")
+            
+         
+              merguesecundarysnp = X[c(2,5,9,10)]
+              
+              names(merguesecundarysnp)= c("BEST_SNP","F_A2","P2", "OR2")
+            
+            
+            m1$SNPA2 = m1[8]
+            
+            # Replace the chromosome to keep the position in the SNP column
+            # for(ii in 22:1){
+            #  m1$BEST_SNP = gsub(paste0("",ii,":"), "", m1$BEST_SNP)
+            #}
+            
+            #m1$BEST_SNP = as.numeric(m1$BEST_SNP)
+            #merguesecundarysnp$BEST_SNP = as.numeric(merguesecundarysnp$BEST_SNP)
+            
+            m2 = inner_join(m1, merguesecundarysnp, by ="BEST_SNP")
+            
+              final = m2[c(2,6,14,11,12,13,15,16,17,9)]
+              
+              names(final) = c("SNP", "CHISQ", "SNP2", 
+                               "F_A1", "OR1", "P1", 
+                               "F_A2", "P2", "OR2", "TBf")
+              
+              final2 = as.matrix(final)
+              
+              final3 = as.data.frame(final2)
+              
+              # To keep p.value
+              episuc100 = read_delim(paste0("",out,"/episelecrjoint.epi.cc.summary"),
+                                     delim = " ", col_types = "ncnnnnnc")
+              names(episuc100) = c("CHR", "SNP", "N_SIG", "N_TOT", "PROP", "BEST_CHISQ", "BEST_CHR", "BEST_SNP")
+              episet = episuc100
+              epirep = episet[c(2,8)]
+              epipvalue = read_delim(paste0("",out,"/episelecrjoint.epi.cc"),
+                                     delim = " ", col_types = "ncncnn")
+              names(epipvalue) = c("CHR1", "SNP1", "CHR2", "SNP2", "STAT", "P")
+              
+              quiero = filter(epipvalue, epipvalue$SNP1 %in% epirep$SNP & epipvalue$SNP2 %in% epirep$BEST_SNP)
+              quiero = mutate(quiero, deseo = paste(SNP1,SNP2))
+              episet = mutate(episet, deseo = paste(SNP,BEST_SNP))
+              qf = filter(quiero, quiero$deseo %in% episet$deseo)
+              qf = qf[c(2,6)]
+              names(qf) = c("SNP", "Pepi")
+              
+              m5 = inner_join(final3, qf, by ="SNP")
+              
+              epiinform = m5[c(1,2,10,11,3:9)]
+              write.table(epiinform, file = paste0("",out,"/epiinform.txt"),
+                          sep = " ", row.names = F, col.names = T, quote = F)
+              
+              tx  = readLines(paste0("",out,"//epiinform.txt"))
+              tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
+              write.table(tx, file = paste0("",out,"/epiinform.txt"),
+                          sep = " ", row.names = F, col.names = F, quote = F)
+              
+          }
+      }
+
+
     
-      
-      # Write the file that is the ANNOVAR input
-      write.table(snpannovar, file = paste0("",out,"/snpannovar.txt"),
-                  sep = " ", row.names = F, col.names = F, quote = F)
-      
-      # me he quedado aqui REVISANDO
-      
-      # Remove quotes from the file
-      #system(paste0("sed -i 's/\"//g' ",out,"/snpannovar.txt"))
-      
-      # ANNOVAR command:
-      # annotate_variation.pl -out c1controlesannovar -build hg19 chr1controlesannovar.txt Doctorado/Annovar/annovar.latest/annovar/humandb/
-      system(paste0("",varpl," -out ",out,"/snpannovar -build ",build," ",out,"/snpannovar.txt ",db,""))
-      
-      
-      tx  = readLines(paste0("",out,"/snpannovar.exonic_variant_function"))
-      tx  = gsub(pattern = "SNV", replace = "", x = tx)
-      tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
-      
-      write.table(tx, file = paste0("",out,"/snpannovar.exonic_variant_function"),
-                  sep = " ", row.names = F, col.names = F, quote = F)
-      
-      
-      # Remove "SNV" from the file
-      #system(paste0("sed -i 's/SNV//g' ",out,"/snpannovar.exonic_variant_function"))
-      
-      # Remove the spaces and tabs to generate only simple spaces throughout the file
-      #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/snpannovar.exonic_variant_function"))
-      
-      #  Load in R ANNOVAR file
-      asevf = read_delim(paste0("",out,"/snpannovar.exonic_variant_function"),
-                         delim = " ", col_types = "cccccccc", col_names = F)
-      if (length(asevf) != 0){
-        names(asevf) = c("linea","tipo","gen","chr","ini","fin","ref","alt")
-      }
-      
-      # Possible values in field "tipo" include: nonsynonymous, synonymous, frameshift insertion,
-      # frameshift deletion, nonframeshift insertion, nonframeshift deletion, frameshift block substitution, nonframshift block substitution
-      
-      tx  = readLines(paste0("",out,"/snpannovar.variant_function"))
-      tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
-      write.table(tx, file = paste0("",out,"/snpannovar.variant_function"),
-                  sep = " ", row.names = F, col.names = F, quote = F)
-      
-      
-      
-      # Same for the other file
-      #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/snpannovar.variant_function"))
-      asvf = read_delim(paste0("",out,"/snpannovar.variant_function"),
-                        delim = " ", col_types = "ccccccc", col_names = F)
-      names(asvf) = c("loc","gen","chr","ini","fin","ref","alt")
-      
-      #
-      if (length(asevf) != 0){
-        # Mergue data frames
-        aux = asevf[c("tipo", "ini")]
-        names(aux)[2] = "SNP"
-        aux$SNP = as.numeric(aux$SNP)
-        X$SNP = as.numeric(X$SNP)
-        aux = unique(aux)
-        
-        # Full_join by position
-        X = full_join(X, aux, by ="SNP")
-        
-        # Same for the other file
-        aux2 = asvf[c("loc","gen","ini")]
-        names(aux2)[3] = "SNP"
-        aux2$SNP = as.numeric(aux2$SNP)
-        aux2 = unique(aux2)
-        
-        X = full_join(X, aux2, by ="SNP")
-        
-        # Write the file with PLINK and ANNOVAR data
-        write.table(X, file = paste0("",out,"/snpepistasisannovar.txt"),
-                    sep = " ", row.names = F, col.names = T, quote = F)
-      }else{
-        aux2 = asvf[c("loc","gen","ini")]
-        names(aux2)[3] = "BP"
-        aux2$BP = as.numeric(aux2$BP)
-        X$BP = as.numeric(X$BP)
-        aux2 = unique(aux2)
-        
-        
-        
-        X = full_join(X, aux2, by ="BP")
-        
-        
-        
-        
-        # Write the file with PLINK and ANNOVAR data
-        write.table(X, file = paste0("",out,"/snpepistasisannovar.txt"),
-                    sep = " ", row.names = F, col.names = T, quote = F)
-      }
-      
-      tx  = readLines(paste0("",out,"/snpepistasisannovar.txt"))
-      tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
-      write.table(tx, file = paste0("",out,"/snpepistasisannovar.txt"),
-                  sep = " ", row.names = F, col.names = F, quote = F)
-      
-      #system(paste0("sed -i 's/\"//g' ",out,"/snpepistasisannovar.txt"))
-      #system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/snpepistasisannovar.txt"))
-      
-      
-      # ESTO ES LO NORMAL mergueprimarisnp = asclumanovar100[c(2,5,10,9,12,13,14)]
-      if (length(asevf) != 0){
-        mergueprimarisnp = asclumanovar100[c(2,5,10,9,12,13,14)]
-        names(mergueprimarisnp) = c("SNP","F_A1","OR1","P1","Tipo1","Loc1","Gen1")
-      } else{ # IREM
-        mergueprimarisnp = asclumanovar100[c(11,5,10,9,12,13)]
-        names(mergueprimarisnp) = c("SNP","F_A1","OR1","P1","Loc1","Gen1")
-      }
-      #mergueprimarisnp$SNP = as.numeric(mergueprimarisnp$SNP)
-      
-      episuc100$SNPA = episuc100[2]
-      
-      # Replace the chromosome to keep the position in the SNP column
-      # for(ii in 22:1){
-      #    episuc100$SNP = gsub(paste0("",ii,":"), "", episuc100$SNP)
-      #}
-      
-      #episuc100$SNP = as.numeric(episuc100$SNP)
-      
-      
-      # Full_join by position
-      m1 = inner_join(episuc100, mergueprimarisnp, by ="SNP")
-      
-      if (length(asevf) != 0){
-        merguesecundarysnp = X[c(2,5,9,10,12,13,14)]
-        
-        names(merguesecundarysnp)= c("BEST_SNP","F_A2","P2", "OR2", "Tipo2", "Loc2", "Gen2")
-      } else{
-        merguesecundarysnp = X[c(2,5,9,10,12,13)]
-        
-        names(merguesecundarysnp)= c("BEST_SNP","F_A2","P2", "OR2", "Loc2", "Gen2")
-      }
-      
-      m1$SNPA2 = m1[8]
-      
-      # Replace the chromosome to keep the position in the SNP column
-      # for(ii in 22:1){
-      #  m1$BEST_SNP = gsub(paste0("",ii,":"), "", m1$BEST_SNP)
-      #}
-      
-      #m1$BEST_SNP = as.numeric(m1$BEST_SNP)
-      #merguesecundarysnp$BEST_SNP = as.numeric(merguesecundarysnp$BEST_SNP)
-      
-      m2 = inner_join(m1, merguesecundarysnp, by ="BEST_SNP")
-      
-      if (length(asevf) != 0){
-        final = m2[c(10,6,17,16,23,11,12,13,14,15,18,19,20,21,22,9)]
-        
-        names(final) = c("SNP", "CHISQ", "SNP2", "GEN1", "GEN2",
-                         "F_A1", "OR1", "P1", "TIPO1", "LOC1",
-                         "F_A2", "P2", "OR2", "TIPO2", "LOC2", "TBf")
-        
-        final2 = as.matrix(final)
-        
-        final3 = as.data.frame(final2)
-        
-        # To keep p.value
-        episuc100 = read_delim(paste0("",out,"/episelecrjoint.epi.cc.summary"),
-                               delim = " ", col_types = "ncnnnnnc")
-        names(episuc100) = c("CHR", "SNP", "N_SIG", "N_TOT", "PROP", "BEST_CHISQ", "BEST_CHR", "BEST_SNP")
-        episet = episuc100
-        epirep = episet[c(2,8)]
-        epipvalue = read_delim(paste0("",out,"/episelecrjoint.epi.cc"),
-                               delim = " ", col_types = "ncncnn")
-        names(epipvalue) = c("CHR1", "SNP1", "CHR2", "SNP2", "STAT", "P")
-        
-      
-        
-        quiero = filter(epipvalue, epipvalue$SNP1 %in% epirep$SNP & epipvalue$SNP2 %in% epirep$BEST_SNP)
-        quiero = mutate(quiero, deseo = paste(SNP1,SNP2))
-        episet = mutate(episet, deseo = paste(SNP,BEST_SNP))
-        qf = filter(quiero, quiero$deseo %in% episet$deseo)
-        qf = qf[c(2,6)]
-        names(qf) = c("SNP", "Pepi")
-        
-        m5 = inner_join(final3, qf, by ="SNP")
-        
-        epiinform = m5[c(1,2,16,17,3:15)]
-        write.table(epiinform, file = paste0("",out,"/epiinform.txt"),
-                    sep = " ", row.names = F, col.names = T, quote = F)
-        
-        tx  = readLines(paste0("",out,"//epiinform.txt"))
-        tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
-        write.table(tx, file = paste0("",out,"/epiinform.txt"),
-                    sep = " ", row.names = F, col.names = F, quote = F)
-      }else{
-        final = m2[c(2,6,16,15,21,11,12,13,14,17,18,19,20,9)]
-        
-        names(final) = c("SNP", "CHISQ", "SNP2", "GEN1", "GEN2",
-                         "F_A1", "OR1", "P1", "LOC1",
-                         "F_A2", "P2", "OR2", "LOC2", "TBf")
-        
-        final2 = as.matrix(final)
-        
-        final3 = as.data.frame(final2)
-        
-        # To keep p.value
-        episuc100 = read_delim(paste0("",out,"/episelecrjoint.epi.cc.summary"),
-                               delim = " ", col_types = "ncnnnnnc")
-        names(episuc100) = c("CHR", "SNP", "N_SIG", "N_TOT", "PROP", "BEST_CHISQ", "BEST_CHR", "BEST_SNP")
-        episet = episuc100
-        epirep = episet[c(2,8)]
-        epipvalue = read_delim(paste0("",out,"/episelecrjoint.epi.cc"),
-                               delim = " ", col_types = "ncncnn")
-        names(epipvalue) = c("CHR1", "SNP1", "CHR2", "SNP2", "STAT", "P")
-        
-        quiero = filter(epipvalue, epipvalue$SNP1 %in% epirep$SNP & epipvalue$SNP2 %in% epirep$BEST_SNP)
-        quiero = mutate(quiero, deseo = paste(SNP1,SNP2))
-        episet = mutate(episet, deseo = paste(SNP,BEST_SNP))
-        qf = filter(quiero, quiero$deseo %in% episet$deseo)
-        qf = qf[c(2,6)]
-        names(qf) = c("SNP", "Pepi")
-        
-        m5 = inner_join(final3, qf, by ="SNP")
-        
-        epiinform = m5[c(1,2,14,15,3:13)]
-        write.table(epiinform, file = paste0("",out,"/epiinform.txt"),
-                    sep = " ", row.names = F, col.names = T, quote = F)
-        
-        tx  = readLines(paste0("",out,"//epiinform.txt"))
-        tx  = gsub(pattern = "[[:space:]]", replace = " ", x = tx)
-        write.table(tx, file = paste0("",out,"/epiinform.txt"),
-                    sep = " ", row.names = F, col.names = F, quote = F)
-        
-      }
-      
-      
-    }
     
   
-} # Fin de función
+
