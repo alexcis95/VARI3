@@ -11,7 +11,7 @@ VSNP3(
   plink = "plink",
   core = detectCores() - 1,
   varpl = "annotate_variation.pl",
-  ANNOVAR = T,
+  ANNOVAR = F,
   build = "hg19",
   db = "../../Doctorado/Annovar/annovar.latest/annovar/humandb/"
 )
