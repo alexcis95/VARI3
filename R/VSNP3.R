@@ -29,7 +29,7 @@ VSNP3 = function(bfile,
                  db = "../../Doctorado/Annovar/annovar.latest/annovar/humandb/") {
    
       # Assoc analysis
-      system(paste0("",plink," --bfile ",bfile," --assoc --out ",out,"/assocall --threads ",core,""))
+      system(paste0("",plink," --bfile ",bfile," --assoc --out ",out,"/assocall --threads ",core," --allow-no-sex"))
   
       system(paste0("sed -i 's/[[:space:]]\\+/ /g' ",out,"/assocall.assoc"))    
   
@@ -476,8 +476,10 @@ VSNP3 = function(bfile,
             
             
             # Generation of epistasis with WU joint effects correction (Same as CASSI, does not test for set so we have to use PLINK) Joint-effects applies correction that there are 5 per cell of the contingency table.
-            system(paste0("",plink," --bfile ",bfile," --fast-epistasis joint-effects --set-test --set ",out,"/epistasisrset.set --out ",out,"/episelecrjoint --threads ",core,""))
+            system(paste0("",plink," --bfile ",bfile," --fast-epistasis joint-effects --set-test --set ",out,"/epistasisrset.set --out ",out,"/episelecrjoint --threads ",core," --allow-no-sex --epi1 0.99"))
             
+            # Esto es para que saque lo maximo posible
+            #system(paste0("",plink," --bfile ",bfile," --epistasis --set-test --set ",out,"/epistasisrset.set --out ",out,"/episelecrjoint --threads ",core," --allow-no-sex --epi1 0.99"))
             
             
             tx  = readLines(paste0("",out,"/episelecrjoint.epi.cc.summary"))
