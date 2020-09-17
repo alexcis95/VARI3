@@ -27,7 +27,7 @@ TLTO = function(l1,
                    plink = "plink")
 {
   # We execute twolocus command
-  system(paste0("",plink," --bfile ",bfile," --out ",out,"/",l1,"vs",l2," --twolocus ",l1," ",l2," --threads ",core,""))
+  system(paste0("",plink," --bfile ",bfile," --out ",out,"/",l1,"vs",l2," --twolocus ",l1," ",l2," --threads ",core," --allow-no-sex"))
 
   # Ee split the document in two: cases and controls
   system(paste0("awk '/Cases/,/Controls/ { print }' ",out,"/",l1,"vs",l2,".twolocus > ",out,"/cases"))
