@@ -1,0 +1,11 @@
+Package: VARI3
+Title: VARI3 (Variant-variant interaction through variable thresholds)
+Version: 0.1
+Authors@R: person("Alejandro", "Cisterna", email = "alejandro.cisterna@um.es", role = c("aut", "cre"))
+Description: VARI3 is a hypothesis-free pipeline that facilitates the interrogation and identification of variant-variant interactions at a genome-wide level through the inclusion of high MAF SNPs.
+Depends: R (>= 3.5.0)
+Imports: parallel, readr, data.table, dplyr, reshape2, ggplot2, tidyr
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.1.1
