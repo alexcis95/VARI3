@@ -7,7 +7,7 @@ This package contain:
 
 VARI3 function.   
 TLTO function, Two Locus To Odd.  
-PTMDR function, Plink To Multifactor Dimensionality Reduction.  
+
 
 ## Requirements  
 
